@@ -1,4 +1,4 @@
-# blade-sniper-calc<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,203 +6,144 @@
   <title>Blade Sniper Calc</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #111;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1e1e2f, #2e2e3f);
       color: #fff;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      padding: 20px;
     }
     h1 {
-      color: #8cfffb;
-      margin-bottom: 10px;
-    }
-    .container {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
       margin-top: 20px;
     }
-    .side {
-      width: 45%;
-      min-width: 300px;
-      margin-bottom: 20px;
+    .calculator {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #2f2f3f;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #000;
     }
     select {
-      width: 90%;
-      padding: 8px;
-      margin: 5px 0;
-      background-color: #222;
-      color: #fff;
-      border: 1px solid #555;
-      border-radius: 5px;
-    }
-    button {
-      padding: 10px 25px;
-      margin-top: 20px;
-      background-color: #00c2ff;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      background-color: #3f3f4f;
+      color: white;
       border: none;
       border-radius: 5px;
-      font-weight: bold;
+      font-size: 16px;
+    }
+    button {
+      background-color: #5e5eff;
+      border: none;
+      padding: 12px 24px;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
+      margin-top: 20px;
+      border-radius: 5px;
     }
     button:hover {
-      background-color: #00a8db;
+      background-color: #4e4edf;
     }
-    #result {
-      font-size: 18px;
+    .result {
       margin-top: 20px;
-      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
     }
-    .credit {
+    .row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .column {
+      flex: 1;
+      margin: 10px;
+    }
+    footer {
       margin-top: 40px;
       font-size: 12px;
-      color: #888;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <h1>Blade Sniper Calc</h1>
-  <div class="container">
-    <div class="side" id="side1">
-      <h3>Your Offer</h3>
-      <select class="item"><option value="">Select item</option></select>
-      <select class="item"><option value="">Select item</option></select>
-      <select class="item"><option value="">Select item</option></select>
-      <select class="item"><option value="">Select item</option></select>
+  <div class="calculator">
+    <div class="row">
+      <div class="column">
+        <h2>Your Offer</h2>
+        <div id="yourOfferSlots"></div>
+      </div>
+      <div class="column">
+        <h2>Their Offer</h2>
+        <div id="theirOfferSlots"></div>
+      </div>
     </div>
-    <div class="side" id="side2">
-      <h3>Their Offer</h3>
-      <select class="item"><option value="">Select item</option></select>
-      <select class="item"><option value="">Select item</option></select>
-      <select class="item"><option value="">Select item</option></select>
-      <select class="item"><option value="">Select item</option></select>
-    </div>
+    <button onclick="compareOffers()">Compare</button>
+    <div class="result" id="result"></div>
   </div>
-  <button onclick="compare()">Compare</button>
-  <div id="result"></div>
-  <div class="credit">Made by Blade</div>
+  <footer>Made by Blade</footer>
 
   <script>
-    const values = {
-      "bat scythe": 0.15,
-      "black df gun": 3.1,
-      "black df knife": 2.2,
-      "black df sniper": 3.85,
-      "black flutter gun": 0.55,
-      "black flutter knife": 0.45,
-      "black ice peg knife": 0.3,
-      "blue df gun": 2.5,
-      "blue df knife": 2.1,
-      "blue df sniper": 3,
-      "blue flutter gun": 0.5,
-      "blue flutter knife": 0.5,
-      "blue ice peg knife": 0.3,
-      "blue orn gun": 1,
-      "bwg": 57,
-      "bwk": 13,
-      "cel sniper": 1.2,
-      "cel gun": 0.6,
-      "celestial knife": 0.15,
-      "dragonbreath": 0.15,
-      "enchanted mermaid gun": 0.28,
-      "enchanted reaper knife": 0.22,
-      "fb crossbow": 8,
-      "normal fang gun": 0.47,
-      "normal fang knife": 0.38,
-      "flutter sniper": 1,
-      "frost fang knife": 0.3,
-      "gsg": 29,
-      "gsk": 8,
-      "gss": 37,
-      "gwk": 6,
-      "gwg": 16.5,
-      "harmonic knife": 0.15,
-      "nebula gun": 0.5,
-      "nebula knife": 0.35,
-      "nebula sniper": 1,
-      "normal mermaid gun": 0.4,
-      "normal mermaid knife": 0.31,
-      "normal sniper": 1,
-      "ornament gun": 1,
-      "ornament knife": 0.5,
-      "orn set": 1.7,
-      "psg": 54,
-      "psk": 12,
-      "pwg": 34.5,
-      "pwk": 10,
-      "purple rhine knife": 0.5,
-      "purple df gun": 3.85,
-      "purple df knife": 2.25,
-      "purple df sniper": 4,
-      "peppermint gun (green)": 5.1,
-      "peppermint knife (green)": 5.5,
-      "red df gun": 2.5,
-      "red df knife": 2.1,
-      "red df sniper": 3,
-      "red ice peg gun": 0.37,
-      "reef gun": 12,
-      "reef knife": 4,
-      "rhine gun": 1,
-      "rhine set": 1.6,
-      "rhine sniper": 1.5,
-      "rose gun": 5,
-      "rosethorn knife": 0.15,
-      "rsg": 32.5,
-      "rsk": 9,
-      "rss": 41.5,
-      "rwg": 22,
-      "rwk": 7,
-      "rws": 29,
-      "void crossbow": 0.15,
-      "wc": 36,
-      "white ice peg knife": 0.3,
-      "winx gun": 0.45,
-      "winx knife": 0.3,
-      "ysg": 20.5,
-      "ysk": 6.5
+    const itemValues = {
+      "bat scythe": 0.15, "black df gun": 3.1, "black df knife": 2.2,
+      "black df sniper": 3.9, "black flutter gun": 0.55, "black flutter knife": 0.45,
+      "blue df gun": 2.5, "blue df knife": 2.1, "blue df sniper": 3,
+      "cel sniper": 1.2, "fb crossbow": 8.5, "flutter sniper": 1,
+      "gsg": 29, "gsk": 8, "gss": 37, "gwg": 17, "gwk": 6,
+      "pwg": 34.5, "pwk": 10, "psg": 55, "psk": 12,
+      "rwg": 22, "rwk": 7, "rsg": 32.5, "rsk": 9, "rss": 41.5,
+      "reef gun": 12, "reef knife": 4, "rose gun": 5,
+      "ysg": 20.5, "ysk": 6.5,
+      "purple df sniper": 4, "red df sniper": 3, "blue flutter gun": 0.5,
+      "normal sniper": 1
     };
 
-    function populateDropdowns() {
-      const selects = document.querySelectorAll("select");
-      for (const select of selects) {
-        for (const item in values) {
-          const option = document.createElement("option");
-          option.value = item;
-          option.textContent = item;
-          select.appendChild(option);
-        }
+    const itemOptions = Object.keys(itemValues).sort();
+
+    function createDropdown(id) {
+      const select = document.createElement("select");
+      select.innerHTML = `<option value="">Select item</option>` +
+        itemOptions.map(item => `<option value="${item}">${item}</option>`).join("");
+      document.getElementById(id).appendChild(select);
+    }
+
+    function setupSlots(containerId, count) {
+      for (let i = 0; i < count; i++) {
+        createDropdown(containerId);
       }
     }
 
-    function calculateTotal(selects) {
+    function calculateTotal(slotId) {
+      const selects = document.getElementById(slotId).getElementsByTagName("select");
       let total = 0;
-      for (const select of selects) {
-        const val = values[select.value];
-        if (val) total += val;
+      for (let s of selects) {
+        if (s.value) total += itemValues[s.value] || 0;
       }
       return total;
     }
 
-    function compare() {
-      const side1 = document.querySelectorAll("#side1 select");
-      const side2 = document.querySelectorAll("#side2 select");
-      const total1 = calculateTotal(side1);
-      const total2 = calculateTotal(side2);
-      const diff = Math.abs(total1 - total2).toFixed(2);
-      let verdict;
+    function compareOffers() {
+      const yourTotal = calculateTotal("yourOfferSlots");
+      const theirTotal = calculateTotal("theirOfferSlots");
+      let diff = (yourTotal - theirTotal).toFixed(2);
 
-      if (total1 > total2) {
-        verdict = `Win by ${diff} snipers`;
-      } else if (total1 < total2) {
-        verdict = `Loss by ${diff} snipers`;
+      let resultText = `Your offer: ${yourTotal} snipers | Their offer: ${theirTotal} snipers\n`;
+      if (yourTotal > theirTotal) {
+        resultText += `You are overpaying by ${diff} snipers (L)`;
+      } else if (yourTotal < theirTotal) {
+        resultText += `You are winning by ${Math.abs(diff)} snipers (W)`;
       } else {
-        verdict = "Fair trade";
+        resultText += `Fair trade (0 sniper diff)`;
       }
 
-      document.getElementById("result").textContent = `Result: ${verdict}`;
+      document.getElementById("result").innerText = resultText;
     }
 
-    populateDropdowns();
+    setupSlots("yourOfferSlots", 8);
+    setupSlots("theirOfferSlots", 8);
   </script>
 </body>
 </html>
